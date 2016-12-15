@@ -17,24 +17,12 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String KEY_COUNT = "count";
-
     private CountObserver countObserver;
-    private int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            count = savedInstanceState.getInt(KEY_COUNT);
-        }
         setContentView(R.layout.activity_main);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(KEY_COUNT, count);
-        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -42,11 +30,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         countObserver = new CountObserver(new Handler());
         getContentResolver().registerContentObserver(CountProvider.getUri(), true, countObserver);
-        if (count == 0) {
-            fetchCount();
-        } else {
-            showText(count);
-        }
+        fetchCount();
     }
 
     @Override
@@ -57,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showText(int count) {
-        TextView text = (TextView) findViewById(R.id.main_text_view);
-        text.setText(String.format(getString(R.string.main_text), count));
+    private void showCount(int count) {
+        TextView text = (TextView) findViewById(R.id.main_text_count);
+        text.setText(String.valueOf(count));
     }
 
     private void fetchCount() {
@@ -72,8 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(Integer count) {
-                MainActivity.this.count = count;
-                showText(count);
+                showCount(count);
             }
         }.execute();
     }

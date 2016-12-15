@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Mobile Check</string>
-    <string name="main_text">Today you have checked your phone %d times</string>
+    <string name="main_text_top">Today you have checked your phone</string>
+    <string name="main_text_bottom">times</string>
 </resources>
