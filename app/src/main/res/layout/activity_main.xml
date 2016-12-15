@@ -18,7 +18,8 @@
         android:layout_gravity="center"
         android:gravity="bottom"
         android:layout_weight="1"
-        android:textSize="18sp"
+        android:textAlignment="center"
+        android:textSize="20sp"
         android:textColor="@color/colorPrimary"
         android:text="@string/main_text_top"
     />
@@ -40,7 +41,7 @@
         android:layout_gravity="center"
         android:gravity="top"
         android:layout_weight="1"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textColor="@color/colorPrimary"
         android:text="@string/main_text_bottom"
     />
