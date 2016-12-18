@@ -1,5 +1,6 @@
 package com.myapps.mobilecheck.activity;
 
+import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -42,8 +43,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showCount(int count) {
-        TextView text = (TextView) findViewById(R.id.main_text_count);
-        text.setText(String.valueOf(count));
+        TextView countText = (TextView) findViewById(R.id.main_text_count);
+        countText.setText(String.valueOf(count));
+
+        TextView bottomText = (TextView) findViewById(R.id.bottom_text);
+        String bottomString = getResources().getQuantityString(R.plurals.main_text_bottom, count);
+        bottomText.setText(bottomString);
     }
 
     private void fetchCount() {
