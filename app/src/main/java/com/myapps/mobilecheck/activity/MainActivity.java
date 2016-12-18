@@ -24,6 +24,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        boolean isTablet = getResources().getBoolean(R.bool.isTablet);
+        TextView topText = (TextView) findViewById(R.id.top_text);
+        if (isTablet) {
+            topText.setText(R.string.main_text_top_tablet);
+        } else {
+            topText.setText(R.string.main_text_top_phone);
+        }
     }
 
     @Override
