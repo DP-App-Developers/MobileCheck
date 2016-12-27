@@ -50,6 +50,7 @@ public class CountProvider extends ContentProvider {
         }
         SQLiteDatabase db = countDatabaseHelper.getWritableDatabase();
         Cursor cursor = db.query(CountDatabase.COUNT_TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 

@@ -1,12 +1,10 @@
 package com.myapps.mobilecheck.activity;
 
-import android.content.res.Resources;
-import android.database.ContentObserver;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import com.myapps.mobilecheck.R;
@@ -16,9 +14,7 @@ import com.myapps.mobilecheck.provider.CountProvider;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
-
-    private CountObserver countObserver;
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,22 +27,29 @@ public class MainActivity extends AppCompatActivity {
         } else {
             topText.setText(R.string.main_text_top_phone);
         }
+        getSupportLoaderManager().initLoader(0, null, this);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        countObserver = new CountObserver(new Handler());
-        getContentResolver().registerContentObserver(CountProvider.getUri(), true, countObserver);
-        fetchCount();
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String[] countColumn = new String[] { CountDatabase.COLUMN_COUNT };
+        String selection = CountDatabase.COLUMN_DATE + "=?";
+        String[] selectionArgs = new String[] { currentDate };
+        return new CursorLoader(this, CountProvider.getUri(), countColumn, selection, selectionArgs, null);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if (countObserver != null) {
-            getContentResolver().unregisterContentObserver(countObserver);
+    public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
+        int count = 0;
+        if (c.moveToFirst()) {
+            count = c.getInt(c.getColumnIndex(CountDatabase.COLUMN_COUNT));
         }
+        showCount(count);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
     }
 
     private void showCount(int count) {
@@ -58,58 +61,4 @@ public class MainActivity extends AppCompatActivity {
         bottomText.setText(bottomString);
     }
 
-    private void fetchCount() {
-        new AsyncTask<Void, Void, Integer>() {
-
-            @Override
-            protected Integer doInBackground(Void... voids) {
-                return getCountOfCurrentDate();
-            }
-
-            @Override
-            protected void onPostExecute(Integer count) {
-                showCount(count);
-            }
-        }.execute();
-    }
-
-    /**
-     * should be called from a worker thread
-     * @return count of current date, 0 if it does not exist in db
-     */
-    private int getCountOfCurrentDate() {
-        int count = 0;
-        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        String[] countColumn = new String[] { CountDatabase.COLUMN_COUNT };
-        String selection = CountDatabase.COLUMN_DATE + "=?";
-        String[] selectionArgs = new String[] { currentDate };
-        Cursor c = getContentResolver().query(CountProvider.getUri(), countColumn, selection, selectionArgs, null);
-        if (c == null) return count;
-        try {
-            if (c.moveToFirst()) {
-                count = c.getInt(c.getColumnIndex(CountDatabase.COLUMN_COUNT));
-            }
-        } finally {
-            c.close();
-        }
-        return count;
-    }
-
-
-    private class CountObserver extends ContentObserver {
-
-        public CountObserver(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            this.onChange(selfChange, null);
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            fetchCount();
-        }
-    }
 }
