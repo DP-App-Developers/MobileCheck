@@ -6,4 +6,5 @@
         <item quantity="one">time</item>
         <item quantity="other">times</item>
     </plurals>
+    <string name="action_show_history">Show History</string>
 </resources>
