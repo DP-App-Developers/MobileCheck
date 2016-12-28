@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final int LOADER_CURRENT_DATE_COUNT = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         } else {
             topText.setText(R.string.main_text_top_phone);
         }
-        getSupportLoaderManager().initLoader(0, null, this);
+        getSupportLoaderManager().initLoader(LOADER_CURRENT_DATE_COUNT, null, this);
     }
 
     @Override
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
+        if (c == null) return;
         int count = 0;
         if (c.moveToFirst()) {
             count = c.getInt(c.getColumnIndex(CountDatabase.COLUMN_COUNT));
